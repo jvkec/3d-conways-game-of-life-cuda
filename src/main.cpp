@@ -1,4 +1,4 @@
-#include "opengl_manager.h"
+#include "opengl/opengl_manager.h"
 #include <iostream>
 
 int main()

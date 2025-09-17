@@ -85,14 +85,13 @@ bool OpenGLManager::shouldClose() const
     return glfwWindowShouldClose(window);
 }
 
-// no need for this to be a member function because we want to be able 
-// to call it without an instance of the class
-static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+// static member function definitions
+void OpenGLManager::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void OpenGLManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     // escape key to close window
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -101,7 +100,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
     }
 }
 
-static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+void OpenGLManager::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // scroll up to move camera down, scroll down to move camera up
     // scroll left to move camera right, scroll right to move camera left
