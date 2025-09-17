@@ -12,10 +12,11 @@ public:
     void init(int width = 800, int height = 600);
     void run();
     void cleanup();
+    void render(GLFWwindow* window);
     
     // accessors (const methods)
     GLFWwindow* getWindow() const { return window; };    
-    bool shouldClose() const;
+    bool shouldClose() const;   // checks if program should close
 
 private:
     GLFWwindow* window;
