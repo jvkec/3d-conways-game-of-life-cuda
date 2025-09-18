@@ -5,15 +5,15 @@
 
 // evolution kernel
 __global__ void evolveKernel(
-    bool* current_grid;
-    bool* next_grid;
-    int grid_width;
-    int grid_height;
-    int grid_depth;
-    int birth_min;
-    int birth_max;
-    int survival_min;
-    int survival_max;
+    bool* current_grid,
+    bool* next_grid,
+    int grid_width,
+    int grid_height,
+    int grid_depth,
+    int birth_min,
+    int birth_max,
+    int survival_min,
+    int survival_max
 );
 
 // init kernel
@@ -27,7 +27,9 @@ __global__ void initialKernel(
 __global__ void copyKernel(
     bool* src,
     bool* dst,
-    int total_cells
+    int width, 
+    int height, 
+    int depth
 );
 
 #endif  // KERNELS_H

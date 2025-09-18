@@ -76,7 +76,7 @@ void OpenGLManager::cleanup()
 
 void OpenGLManager::render(GLFWwindow* window)
 {
-    // GL_COLOR_BUFFER_BIT inducates buffers currently enabled for color writing
+    // GL_COLOR_BUFFER_BIT indicates buffers currently enabled for color writing
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

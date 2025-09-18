@@ -12,17 +12,13 @@ private:
     // d_ prefix for device (gpu) and h_ for host (cpu) is best practice
     bool* d_grid_current;   // curr generation on gpu
     bool* d_grid_next;      // next generation on gpu
-
-    int grid_width;
-    int grid_height;
-    int grid_depth;
-    int total_cells;
+    
+    // game parameters
+    GameOfLifeParams params;
 
     // cuda extension configs
     dim3 block_size;
     dim3 grid_size;
-
-    GameOfLifeParameters params;
 
     // helpers
     void calculateExecutionConfig();
@@ -30,7 +26,12 @@ private:
     void freeDeviceMemory();
 
 public:
-    CUDAGameOfLife(int width, int height, int depth);
+    // single constructor with default parameters
+    CUDAGameOfLife(int width = 96, int height = 96, int depth = 96, 
+                   int birth_min = 14, int birth_max = 19, 
+                   int survival_min = 14, int survival_max = 19);
+    CUDAGameOfLife(const GameOfLifeParams& game_params);
+    
     ~CUDAGameOfLife();
 
     void initializeGrid(const std::vector<bool>& initial_state = {});
@@ -42,13 +43,14 @@ public:
 
     // data copying between host and device
     void copyToDevice(const std::vector<bool>& h_data);
-    void copyToHost(const std::vector<bool>& d_data);
+    void copyToHost(std::vector<bool>& h_data);
 
     // accessors
-    int getTotalCells() const { return total_cells; }
-    int getWidth() const { return grid_width; }
-    int getHeight() const { return grid_height; }
-    int getDepth() const { return grid_depth; }
+    int getTotalCells() const { return params.width * params.height * params.depth; }
+    int getWidth() const { return params.width; }
+    int getHeight() const { return params.height; }
+    int getDepth() const { return params.depth; }
+    const GameOfLifeParams& getParams() const { return params; }
 };
 
 #endif  // GAME_LOGIC_H
