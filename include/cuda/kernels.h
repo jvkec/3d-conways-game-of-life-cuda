@@ -16,7 +16,18 @@ __global__ void evolveKernel(
     int survival_max;
 );
 
-// util func to copy kernels
+// init kernel
+__global__ void initialKernel(
+    bool* grid,
+    int total_cells,
+    float density
+);
 
+// util func to copy kernels
+__global__ void copyKernel(
+    bool* src,
+    bool* dst,
+    int total_cells
+);
 
 #endif  // KERNELS_H
