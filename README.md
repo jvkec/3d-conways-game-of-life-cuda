@@ -6,6 +6,10 @@ Use the batch runner on a GPU machine to generate states, then visualize them on
 ## Why I built this
 It had been a while since I touched any CUDA at the time of building this so I wanted to brush up on my skills and build something cool but on the simpler end of the scale. It was also the first time I decided to document my planning on an Excalidraw whiteboard which is a practice I want to keep in my development cycle moving forward!
 
+Here is what I had on my whiteboard by the time of completion.
+
+![Excalidraw Whiteboard](assets/images/3d-cgol.png)
+
 ## Screenshots
 
 ![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.57.56%E2%80%AFPM.png)
