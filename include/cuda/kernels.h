@@ -19,7 +19,9 @@ __global__ void evolveKernel(
 // init kernel
 __global__ void initialKernel(
     bool* grid,
-    int total_cells,
+    int width,
+    int height,
+    int depth,
     float density
 );
 

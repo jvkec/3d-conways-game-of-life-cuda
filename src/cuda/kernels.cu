@@ -7,9 +7,16 @@ __device__ __forceinline__ int flatten3D(int x, int y, int z, int width, int hei
 }
 
 // forceinline because called on every cell in the grid
-__device__ __forceinline__ int countNeighbors(const bool* grid,
-                              int x, int y, int z,
-                              int width, int height, int depth) {
+__device__ __forceinline__ int countNeighbors(
+    const bool* grid,
+    int x, 
+    int y, 
+    int z,
+    int width, 
+    int height, 
+    int depth
+) 
+{
     int neighbor_count = 0;
     for (int dz = -1; dz <= 1; ++dz) {
         int nz = z + dz;
@@ -65,7 +72,9 @@ __global__ void evolveKernel(
 
 __global__ void initialKernel(
     bool* grid,
-    int width, int height, int depth,
+    int width, 
+    int height, 
+    int depth,
     float density
 )
 {
@@ -87,7 +96,9 @@ __global__ void initialKernel(
 __global__ void copyKernel(
     bool* src,
     bool* dst,
-    int width, int height, int depth
+    int width, 
+    int height, 
+    int depth
 )
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;

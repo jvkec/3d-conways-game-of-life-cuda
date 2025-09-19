@@ -2,16 +2,17 @@
 #define GAME_LOGIC_H
 
 #include <cuda_runtime.h>
-#include <types.h>
+#include "cuda/types.h"
 #include <vector>
  
 class CUDAGameOfLife 
 {
 private:
     // device memory pointers
+    // use double buffer for curr and next gens
     // d_ prefix for device (gpu) and h_ for host (cpu) is best practice
-    bool* d_grid_current;   // curr generation on gpu
-    bool* d_grid_next;      // next generation on gpu
+    bool* d_grid_current;
+    bool* d_grid_next;
     
     // game parameters
     GameOfLifeParams params;
@@ -43,7 +44,7 @@ public:
 
     // data copying between host and device
     void copyToDevice(const std::vector<bool>& h_data);
-    void copyToHost(std::vector<bool>& h_data);
+    void copyToHost(std::vector<bool>& d_data);
 
     // accessors
     int getTotalCells() const { return params.width * params.height * params.depth; }
