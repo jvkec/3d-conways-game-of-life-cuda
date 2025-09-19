@@ -3,6 +3,9 @@
 A CUDA implementation of 3D Conway-like cellular automata with a lightweight OpenGL viewer. 
 Use the batch runner on a GPU machine to generate states, then visualize them on macOS.
 
+## Why I built this
+
+
 ## Screenshots
 
 ![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.57.56%E2%80%AFPM.png)
@@ -42,11 +45,9 @@ The viewer expects a directory of `.bin` state files. By default it looks under 
 
 ### Controls
 
-- Space: play/pause
 - Left/Right: previous/next frame
 - Mouse drag: orbit
-- Scroll: zoom
-- R: reset camera
+- Esc: exit viewer
 
 ## Generating runs (batch mode)
 
