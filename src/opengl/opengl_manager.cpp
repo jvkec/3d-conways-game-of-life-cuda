@@ -79,8 +79,16 @@ void OpenGLManager::init(int width, int height)
         return;
     }
 
-    // set initial viewport
-    glViewport(0, 0, windowWidth, windowHeight);
+    // get actual framebuffer size (important for Retina displays on macOS)
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+    
+    // set initial viewport using actual framebuffer size
+    glViewport(0, 0, framebufferWidth, framebufferHeight);
+    
+    // update stored dimensions to match actual framebuffer
+    windowWidth = framebufferWidth;
+    windowHeight = framebufferHeight;
     // log versions
     std::cout << "OpenGL Version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLSL Version:    " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
@@ -165,20 +173,16 @@ void OpenGLManager::cleanup()
 
 void OpenGLManager::render(GLFWwindow* window)
 {
-    // Clear the screen
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     if (renderer3D && camera) {
-        // Create projection matrix with fixed FOV
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 
                                               (float)windowWidth / (float)windowHeight, 
                                               0.1f, 2000.0f);
         
-        // Get view matrix from camera
         glm::mat4 view = camera->getViewMatrix();
         
-        // Render the 3D scene
         renderer3D->render(view, projection);
     }
 }
@@ -192,6 +196,12 @@ bool OpenGLManager::shouldClose() const
 void OpenGLManager::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+  
+    OpenGLManager* manager = static_cast<OpenGLManager*>(glfwGetWindowUserPointer(window));
+    if (manager) {
+        manager->windowWidth = width;
+        manager->windowHeight = height;
+    }
 }
 
 void OpenGLManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
