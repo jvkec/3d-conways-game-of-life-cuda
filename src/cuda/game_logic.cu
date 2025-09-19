@@ -64,7 +64,7 @@ void CUDAGameOfLife::calculateExecutionConfig()
         (params.depth + block_size.z - 1) / block_size.z
     );
     
-    std::cout << "CUDA Config - Grid: " << grid_size.x << "x" << grid_size.y << "x" << grid_size.z 
+    std::cout << "CUDA Config - Grid: " << grid_size.x << "x" << grid_size.y << "x" << grid_size.z << std::endl
               << "CUDA Config - Blocks: " << block_size.x << "x" << block_size.y << "x" << block_size.z << std::endl;
 }
 
@@ -173,19 +173,21 @@ void CUDAGameOfLife::copyToDevice(const std::vector<bool>& h_data)
     // copy from host to device - create temporary array
     size_t byte_size = h_data.size() * sizeof(bool);
     bool* temp_data = new bool[h_data.size()];
-    for (size_t i = 0; i < h_data.size(); i++) {
+    for (size_t i = 0; i < h_data.size(); i++) 
+    {
         temp_data[i] = h_data[i];
     }
     
     cudaError_t err = cudaMemcpy(d_grid_current, temp_data, byte_size, cudaMemcpyHostToDevice);
     delete[] temp_data;
     
-    if (err != cudaSuccess) {
+    if (err != cudaSuccess) 
+    {
         std::cerr << "copyToDevice failed: " << cudaGetErrorString(err) << std::endl;
     }
 }
     
-void CUDAGameOfLife::copyToHost(std::vector<bool>& h_data)
+void CUDAGameOfLife::copyToHost(std::vector<bool>& h_data) const
 {
     // resize host vector to match device data size
     h_data.resize(getTotalCells());
@@ -196,13 +198,15 @@ void CUDAGameOfLife::copyToHost(std::vector<bool>& h_data)
     
     cudaError_t err = cudaMemcpy(temp_data, d_grid_current, byte_size, cudaMemcpyDeviceToHost);
     if (err == cudaSuccess) {
-        for (int i = 0; i < getTotalCells(); i++) {
+        for (int i = 0; i < getTotalCells(); i++) 
+        {
             h_data[i] = temp_data[i];
         }
     }
     delete[] temp_data;
     
-    if (err != cudaSuccess) {
+    if (err != cudaSuccess) 
+    {
         std::cerr << "copyToHost failed: " << cudaGetErrorString(err) << std::endl;
     }
 }

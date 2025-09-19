@@ -44,7 +44,7 @@ public:
 
     // data copying between host and device
     void copyToDevice(const std::vector<bool>& h_data);
-    void copyToHost(std::vector<bool>& d_data);
+    void copyToHost(std::vector<bool>& d_data) const;
 
     // accessors
     int getTotalCells() const { return params.width * params.height * params.depth; }
