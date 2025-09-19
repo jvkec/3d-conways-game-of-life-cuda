@@ -1,0 +1,33 @@
+CUDA Game of Life Simulation Summary
+=====================================
+
+Grid dimensions: 96x96x96
+Total generations: 100
+Save interval: 5
+States saved: 21
+Total time: 111 ms
+Rules: birth[14,19] survival[14,19]
+Initial density: 30%
+
+Files created:
+  sim_000000.bin
+  sim_000005.bin
+  sim_000010.bin
+  sim_000015.bin
+  sim_000020.bin
+  sim_000025.bin
+  sim_000030.bin
+  sim_000035.bin
+  sim_000040.bin
+  sim_000045.bin
+  sim_000050.bin
+  sim_000055.bin
+  sim_000060.bin
+  sim_000065.bin
+  sim_000070.bin
+  sim_000075.bin
+  sim_000080.bin
+  sim_000085.bin
+  sim_000090.bin
+  sim_000095.bin
+  sim_000100.bin

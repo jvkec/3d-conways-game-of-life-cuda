@@ -1,0 +1,33 @@
+CUDA Game of Life Simulation Summary
+=====================================
+
+Grid dimensions: 96x96x96
+Total generations: 100
+Save interval: 5
+States saved: 21
+Total time: 266 ms
+Rules: birth[4,8] survival[4,8]
+Initial density: 20%
+
+Files created:
+  better_000000.bin
+  better_000005.bin
+  better_000010.bin
+  better_000015.bin
+  better_000020.bin
+  better_000025.bin
+  better_000030.bin
+  better_000035.bin
+  better_000040.bin
+  better_000045.bin
+  better_000050.bin
+  better_000055.bin
+  better_000060.bin
+  better_000065.bin
+  better_000070.bin
+  better_000075.bin
+  better_000080.bin
+  better_000085.bin
+  better_000090.bin
+  better_000095.bin
+  better_000100.bin

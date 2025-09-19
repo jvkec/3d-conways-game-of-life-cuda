@@ -1,8 +1,10 @@
 NVCC = nvcc
 NVCC_FLAGS = --allow-unsupported-compiler -std=c++17 -O2
 INCLUDES = -I./include
-CUDA_SOURCES = src/cuda/game_logic.cu src/cuda/kernels.cu
+CUDA_SOURCES = src/cuda/game_logic.cu src/cuda/kernels.cu src/cuda/state_manager.cu
 TEST_SOURCE = src/test_cuda.cpp
+TEST_3D_SOURCE = src/test_3d_rules.cpp
+BATCH_RUNNER_SOURCE = src/batch_runner.cpp
 
 # cuda library
 libcuda_game_logic.a: $(CUDA_SOURCES)
@@ -12,12 +14,20 @@ libcuda_game_logic.a: $(CUDA_SOURCES)
 test_cuda: libcuda_game_logic.a $(TEST_SOURCE)
 	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -o $@ $(TEST_SOURCE) -L. -lcuda_game_logic
 
+# Build the 3D rules test program
+test_3d_rules: libcuda_game_logic.a $(TEST_3D_SOURCE)
+	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -o $@ $(TEST_3D_SOURCE) -L. -lcuda_game_logic
+
+# Build the batch runner program
+batch_runner: libcuda_game_logic.a $(BATCH_RUNNER_SOURCE)
+	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -o $@ $(BATCH_RUNNER_SOURCE) -L. -lcuda_game_logic
+
 # for later
 main_app: libcuda_game_logic.a src/main.cpp src/opengl/opengl_manager.cpp
 	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -o $@ src/main.cpp src/opengl/opengl_manager.cpp -L. -lcuda_game_logic -lGL -lGLU
 
 clean:
-	rm -f *.a *.o test_cuda main_app
+	rm -f *.a *.o test_cuda test_3d_rules main_app batch_runner
 
 # default target for test
 all: test_cuda
