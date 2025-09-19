@@ -33,7 +33,7 @@ struct BatchConfig {
     float density = 0.3f;
     uint32_t num_generations = 100;
     uint32_t save_interval = 1;
-    std::string output_dir = "runs/states";
+    std::string output_dir = "runs";
     std::string prefix = "state";
     std::string load_file = "";
     bool validate_only = false;
@@ -50,7 +50,7 @@ void printUsage(const char* program_name) {
     std::cout << "  --grid WxHxD          Grid dimensions (default: 96x96x96)\n";
     std::cout << "  --generations N       Number of generations to simulate (default: 100)\n";
     std::cout << "  --save-every N        Save state every N generations (default: 1)\n";
-    std::cout << "  --output DIR          Output directory (default: states)\n";
+    std::cout << "  --output DIR          Output directory (default: runs)\n";
     std::cout << "  --prefix PREFIX       Filename prefix (default: state)\n";
     std::cout << "  --density FLOAT       Initial population density (default: 0.3)\n";
     std::cout << "  --rules B_MIN,B_MAX,S_MIN,S_MAX  Game rules (default: 14,19,14,19)\n";
@@ -64,8 +64,8 @@ void printUsage(const char* program_name) {
     std::cout << "  --help                Show this help\n\n";
     std::cout << "Examples:\n";
     std::cout << "  " << program_name << " --grid 64x64x64 --generations 500 --save-every 10\n";
-    std::cout << "  " << program_name << " --load state_000100.bin --continue 200\n";
-    std::cout << "  " << program_name << " --list states/ --validate\n";
+    std::cout << "  " << program_name << " --load runs/simulation_000100.bin --continue 200\n";
+    std::cout << "  " << program_name << " --list runs/ --validate\n";
 }
 
 BatchConfig parseArguments(int argc, char* argv[]) {
