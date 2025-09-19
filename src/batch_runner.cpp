@@ -39,6 +39,8 @@ struct BatchConfig {
     bool validate_only = false;
     bool list_only = false;
     bool verbose = false;
+    bool center_init = false;
+    int center_size = 15;
 };
 
 void printUsage(const char* program_name) {
@@ -56,6 +58,8 @@ void printUsage(const char* program_name) {
     std::cout << "  --continue N          Continue simulation for N more generations\n";
     std::cout << "  --list DIR            List all state files in directory\n";
     std::cout << "  --validate            Validate state files\n";
+    std::cout << "  --center-init         Initialize with pattern in center\n";
+    std::cout << "  --center-size N       Size of center region (default: 15)\n";
     std::cout << "  --verbose             Verbose output\n";
     std::cout << "  --help                Show this help\n\n";
     std::cout << "Examples:\n";
@@ -132,6 +136,12 @@ BatchConfig parseArguments(int argc, char* argv[]) {
         }
         else if (arg == "--validate") {
             config.validate_only = true;
+        }
+        else if (arg == "--center-init") {
+            config.center_init = true;
+        }
+        else if (arg == "--center-size" && i + 1 < argc) {
+            config.center_size = std::stoi(argv[++i]);
         }
         else if (arg == "--verbose") {
             config.verbose = true;
@@ -216,9 +226,14 @@ int main(int argc, char* argv[]) {
             
             game.setGameParameters(params);
             
-            
-            game.initialRandomGrid(config.density);
-            std::cout << "Initialized with " << (config.density * 100) << "% density" << std::endl;
+            if (config.center_init) {
+                game.initialCenterGrid(config.density, config.center_size);
+                std::cout << "Initialized with " << (config.density * 100) << "% density in center region (size " 
+                          << config.center_size << ")" << std::endl;
+            } else {
+                game.initialRandomGrid(config.density);
+                std::cout << "Initialized with " << (config.density * 100) << "% density" << std::endl;
+            }
         }
         
         // Run batch simulation

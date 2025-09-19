@@ -135,6 +135,30 @@ void CUDAGameOfLife::initialRandomGrid(float density)
     );
     cudaDeviceSynchronize();
 }
+
+void CUDAGameOfLife::initialCenterGrid(float density, int center_size)
+{
+    if (density < 0.0f || density > 1.0f)
+    {
+        std::cerr << "Density must be between 0.0 and 1.0" << std::endl;
+        exit(1);
+    }
+    int min_dim = std::min(params.width, std::min(params.height, params.depth));
+    if (center_size < 1 || center_size > min_dim / 2)
+    {
+        std::cerr << "Center size must be between 1 and half the smallest dimension" << std::endl;
+        exit(1);
+    }
+    centerInitialKernel<<<grid_size, block_size>>>(
+        d_grid_current,
+        params.width,
+        params.height, 
+        params.depth,
+        density,
+        center_size
+    );
+    cudaDeviceSynchronize();
+}
     
 void CUDAGameOfLife::setGameParameters(const GameOfLifeParams& new_params)
 {

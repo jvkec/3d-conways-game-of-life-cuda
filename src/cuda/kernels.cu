@@ -93,6 +93,47 @@ __global__ void initialKernel(
     grid[thread_id] = (rnd < density);
 }
 
+__global__ void centerInitialKernel(
+    bool* grid,
+    int width, 
+    int height, 
+    int depth,
+    float density,
+    int center_size
+)
+{
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    
+    if (x >= width || y >= height || z >= depth) return;
+    
+    int thread_id = flatten3D(x, y, z, width, height);
+    
+    // calc distance from center
+    int center_x = width / 2;
+    int center_y = height / 2;
+    int center_z = depth / 2;
+    
+    int dx = x - center_x;
+    int dy = y - center_y;
+    int dz = z - center_z;
+    
+    // check if we within the center region
+    bool in_center = (abs(dx) <= center_size && abs(dy) <= center_size && abs(dz) <= center_size);
+    
+    if (!in_center) {
+        grid[thread_id] = false;
+        return;
+    }
+    
+    // lcg per-thread rng based on thread_id
+    unsigned int seed = 1664525u * (thread_id + 1u) + 1013904223u;
+    // convert to float in [0,1)
+    float rnd = (seed & 0x00FFFFFF) / 16777216.0f;
+    grid[thread_id] = (rnd < density);
+}
+
 __global__ void copyKernel(
     bool* src,
     bool* dst,

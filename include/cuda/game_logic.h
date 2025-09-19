@@ -37,6 +37,7 @@ public:
 
     void initializeGrid(const std::vector<bool>& initial_state = {});
     void initialRandomGrid(float density = 0.3);
+    void initialCenterGrid(float density = 0.3, int center_size = 10);
 
     // game
     void setGameParameters(const GameOfLifeParams& new_params);

@@ -25,6 +25,16 @@ __global__ void initialKernel(
     float density
 );
 
+// center initialization kernel
+__global__ void centerInitialKernel(
+    bool* grid,
+    int width,
+    int height,
+    int depth,
+    float density,
+    int center_size
+);
+
 // util func to copy kernels
 __global__ void copyKernel(
     bool* src,

@@ -1,0 +1,33 @@
+CUDA Game of Life Simulation Summary
+=====================================
+
+Grid dimensions: 96x96x96
+Total generations: 200
+Save interval: 10
+States saved: 21
+Total time: 225 ms
+Rules: birth[2,6] survival[2,6]
+Initial density: 40%
+
+Files created:
+  center_000000.bin
+  center_000010.bin
+  center_000020.bin
+  center_000030.bin
+  center_000040.bin
+  center_000050.bin
+  center_000060.bin
+  center_000070.bin
+  center_000080.bin
+  center_000090.bin
+  center_000100.bin
+  center_000110.bin
+  center_000120.bin
+  center_000130.bin
+  center_000140.bin
+  center_000150.bin
+  center_000160.bin
+  center_000170.bin
+  center_000180.bin
+  center_000190.bin
+  center_000200.bin
