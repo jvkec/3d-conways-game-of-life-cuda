@@ -3,6 +3,14 @@
 A CUDA implementation of 3D Conway-like cellular automata with a lightweight OpenGL viewer. 
 Use the batch runner on a GPU machine to generate states, then visualize them on macOS.
 
+## Screenshots
+
+![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.57.56%E2%80%AFPM.png)
+![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.58.06%E2%80%AFPM.png)
+![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.58.22%E2%80%AFPM.png)
+![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.58.31%E2%80%AFPM.png)
+![Screenshot of the 3D Conway's Game of Life simulation](assets/images/Screenshot%202025-09-18%20at%2010.58.41%E2%80%AFPM.png)
+
 What's here
 
 - CUDA kernels and a simple driver to run batches and save states.
@@ -45,8 +53,7 @@ Generating runs (batch mode)
 Run batches on a CUDA machine:
 
 ```
-make batch_runner
-./batch_runner \
+make batch_runner \
   --grid 96x96x96 \
   --generations 300 \
   --save-every 10 \
