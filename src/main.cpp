@@ -1,16 +1,24 @@
 #include "opengl/opengl_manager.h"
 #include <iostream>
+#include <filesystem>
 
-int main()
+int main(int argc, char** argv)
 {
-
-    std::cout << "Starting OpenGL Manager" << std::endl;
-    // loop to create and destroy the window
-    // this is to avoid the window from being destroyed
-    // when the program is closed
-
+    std::cout << "Starting 3D Conway's Game of Life Viewer" << std::endl;
+    
     OpenGLManager openglManager;
-    openglManager.init();
+    openglManager.init(1200, 800);
+    
+    // loading simulation data
+    std::string dir = (argc > 1) ? argv[1] : "";
+    if (dir.empty()) {
+        if (std::filesystem::exists("massive_growth")) dir = "massive_growth";
+        else dir = "states";
+    }
+    openglManager.loadSimulationData(dir);
+    
+    std::cout << "Starting render loop..." << std::endl;
     openglManager.run();
-    openglManager.cleanup();
+    
+    return 0;
 }

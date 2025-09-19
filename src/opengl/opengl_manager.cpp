@@ -1,5 +1,9 @@
-#include "opengl_manager.h"
+#include "opengl/opengl_manager.h"
 #include <iostream>
+#include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 OpenGLManager::OpenGLManager()
 {
@@ -7,14 +11,27 @@ OpenGLManager::OpenGLManager()
     window = nullptr;
     windowWidth = 0;
     windowHeight = 0;
+    
+    renderer3D = nullptr;
+    camera = nullptr;
+    
+    firstMouse = true;
+    lastX = 400.0f;
+    lastY = 300.0f;
+    deltaTime = 0.0f;
+    lastFrame = 0.0f;
+    animationPlaying = false;
+    animationSpeed = 2.0f; // frames per second
+    lastAnimationTime = 0.0f;
+    
+    for (int i = 0; i < 1024; i++) {
+        keys[i] = false;
+    }
 }
 
 OpenGLManager::~OpenGLManager()
 {
-    // initialize to non-garbage to avoid undefined behavior
-    window = nullptr;
-    windowWidth = 0;
-    windowHeight = 0;
+    cleanup();
 }
 
 void OpenGLManager::init(int width, int height)
@@ -29,6 +46,19 @@ void OpenGLManager::init(int width, int height)
         return;
     }
 
+    // request opengl core profile
+#ifdef __APPLE__
+    // macOS supports up to 4.1 core; match shader #version 410
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#else
+    // On other platforms, 3.3 core is widely supported
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+#endif
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     // create a window
     window = glfwCreateWindow(windowWidth, windowHeight, "OpenGL Manager", NULL, NULL);
     if (!window)
@@ -41,12 +71,21 @@ void OpenGLManager::init(int width, int height)
     // make context current
     glfwMakeContextCurrent(window);
 
-    // initialize GLEW
+    // initialize glew
+    glewExperimental = GL_TRUE; // needed for core profile
     if (glewInit() != GLEW_OK)
     {
         std::cerr << "Failed to initialize GLEW" << std::endl;
         return;
     }
+
+    // set initial viewport
+    glViewport(0, 0, windowWidth, windowHeight);
+    // log versions
+    std::cout << "OpenGL Version:  " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "GLSL Version:    " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    // enable v-sync
+    glfwSwapInterval(1);
 
     // set up call back functions
     // we pass function pointers to the callbacks so glfw can find the addresses of the functions
@@ -54,12 +93,48 @@ void OpenGLManager::init(int width, int height)
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetScrollCallback(window, mouseScrollCallback);
+    glfwSetCursorPosCallback(window, mouseCallback);
+    
+    // store this instance in the window user pointer for callbacks
+    glfwSetWindowUserPointer(window, this);
+    
+    // capture the mouse cursor
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    
+    // initialize 3D components
+    camera = new Camera(glm::vec3(0.0f, 0.0f, 150.0f));
+    camera->setTarget(glm::vec3(0.0f));
+    camera->setRadius(180.0f);
+    renderer3D = new Renderer3D();
+    
+    if (!renderer3D->initialize()) {
+        std::cerr << "Failed to initialize 3D renderer" << std::endl;
+        delete renderer3D;
+        renderer3D = nullptr;
+        return;
+    }
 }
 
 void OpenGLManager::run()
 {
     while (!shouldClose())
     {
+        // Calculate delta time
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        
+        // Process input
+        processInput();
+        
+        // Handle animation
+        if (animationPlaying && renderer3D && renderer3D->getTotalFrames() > 0) {
+            if (currentFrame - lastAnimationTime >= (1.0f / animationSpeed)) {
+                renderer3D->nextFrame();
+                lastAnimationTime = currentFrame;
+            }
+        }
+        
         render(window);
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -70,14 +145,42 @@ void OpenGLManager::run()
 
 void OpenGLManager::cleanup()
 {
-    glfwDestroyWindow(window);  // destroy the window
+    if (renderer3D) {
+        delete renderer3D;
+        renderer3D = nullptr;
+    }
+    
+    if (camera) {
+        delete camera;
+        camera = nullptr;
+    }
+    
+    if (window) {
+        glfwDestroyWindow(window);  // destroy the window
+        window = nullptr;
+    }
+    
     glfwTerminate();            // terminate GLFW entirely
 }
 
 void OpenGLManager::render(GLFWwindow* window)
 {
-    // GL_COLOR_BUFFER_BIT indicates buffers currently enabled for color writing
-    glClear(GL_COLOR_BUFFER_BIT);
+    // Clear the screen
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    if (renderer3D && camera) {
+        // Create projection matrix with fixed FOV
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 
+                                              (float)windowWidth / (float)windowHeight, 
+                                              0.1f, 2000.0f);
+        
+        // Get view matrix from camera
+        glm::mat4 view = camera->getViewMatrix();
+        
+        // Render the 3D scene
+        renderer3D->render(view, projection);
+    }
 }
 
 bool OpenGLManager::shouldClose() const
@@ -93,36 +196,97 @@ void OpenGLManager::framebufferSizeCallback(GLFWwindow* window, int width, int h
 
 void OpenGLManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    // escape key to close window
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    OpenGLManager* manager = static_cast<OpenGLManager*>(glfwGetWindowUserPointer(window));
+    
+    if (action == GLFW_PRESS) {
+        if (key >= 0 && key < 1024) {
+            manager->keys[key] = true;
+        }
+    } else if (action == GLFW_RELEASE) {
+        if (key >= 0 && key < 1024) {
+            manager->keys[key] = false;
+        }
+    }
+    
+    // Handle special keys
+    if (action == GLFW_PRESS) {
+        switch (key) {
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+                break;
+            case GLFW_KEY_SPACE:
+                manager->animationPlaying = !manager->animationPlaying;
+                std::cout << "Animation " << (manager->animationPlaying ? "playing" : "paused") << std::endl;
+                break;
+            case GLFW_KEY_RIGHT:
+                if (manager->renderer3D) {
+                    manager->renderer3D->nextFrame();
+                    std::cout << "Frame: " << manager->renderer3D->getCurrentFrame() + 1 
+                             << "/" << manager->renderer3D->getTotalFrames() << std::endl;
+                }
+                break;
+            case GLFW_KEY_LEFT:
+                if (manager->renderer3D) {
+                    manager->renderer3D->prevFrame();
+                    std::cout << "Frame: " << manager->renderer3D->getCurrentFrame() + 1 
+                             << "/" << manager->renderer3D->getTotalFrames() << std::endl;
+                }
+                break;
+            case GLFW_KEY_R:
+                if (manager->camera) {
+                    manager->camera->reset();
+                    std::cout << "Camera reset" << std::endl;
+                }
+                break;
+        }
     }
 }
 
 void OpenGLManager::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    // scroll up to move camera down, scroll down to move camera up
-    // scroll left to move camera right, scroll right to move camera left
-    // cameraPos is a vec3 that stores the camera's position
-    // we can access the x, y, and z components of the cameraPos vector
-    // using cameraPos.x, cameraPos.y, and cameraPos.z
-    // we can also access the x, y, and z components of the cameraPos vector
-    // using cameraPos.x, cameraPos.y, and cameraPos.z
-    // if (yoffset > 0)
-    // {
-    //     cameraPos.y -= 0.1;
-    // }
-    // else if (yoffset < 0)
-    // {
-    //     cameraPos.y += 0.1;
-    // }
-    // else if (xoffset > 0)
-    // {
-    //     cameraPos.x -= 0.1;
-    // }
-    // else if (xoffset < 0)
-    // {
-    //     cameraPos.x += 0.1;
-    //}
+    OpenGLManager* manager = static_cast<OpenGLManager*>(glfwGetWindowUserPointer(window));
+    if (manager->camera) {
+        manager->camera->processMouseScroll(yoffset);
+    }
+}
+
+void OpenGLManager::mouseCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    OpenGLManager* manager = static_cast<OpenGLManager*>(glfwGetWindowUserPointer(window));
+    
+    if (manager->firstMouse) {
+        manager->lastX = xpos;
+        manager->lastY = ypos;
+        manager->firstMouse = false;
+    }
+    
+    float xoffset = xpos - manager->lastX;
+    float yoffset = manager->lastY - ypos; // reversed since y-coordinates go from bottom to top
+    
+    manager->lastX = xpos;
+    manager->lastY = ypos;
+    
+    if (manager->camera) {
+        manager->camera->processMouseMovement(xoffset, yoffset);
+    }
+}
+
+void OpenGLManager::processInput()
+{
+    // Orbit-only mode: no keyboard camera movement
+    (void)deltaTime;
+}
+
+void OpenGLManager::loadSimulationData(const std::string& directory)
+{
+    if (renderer3D) {
+        renderer3D->loadAllStates(directory);
+        std::cout << "Loaded simulation data from: " << directory << std::endl;
+        std::cout << "Controls:" << std::endl;
+        std::cout << "  Mouse: Orbit (rotate) around grid" << std::endl;
+        std::cout << "  Space: Play/Pause animation" << std::endl;
+        std::cout << "  Left/Right arrows: Previous/Next frame" << std::endl;
+        std::cout << "  R: Reset camera" << std::endl;
+        std::cout << "  Escape: Exit" << std::endl;
+    }
 }
