@@ -12,8 +12,8 @@ int main(int argc, char** argv)
     // loading simulation data
     std::string dir = (argc > 1) ? argv[1] : "";
     if (dir.empty()) {
-        if (std::filesystem::exists("massive_growth")) dir = "massive_growth";
-        else dir = "states";
+        if (std::filesystem::exists("runs/massive_growth")) dir = "runs/massive_growth";
+        else dir = "runs/states";
     }
     openglManager.loadSimulationData(dir);
     

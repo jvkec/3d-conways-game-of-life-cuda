@@ -33,7 +33,7 @@ struct BatchConfig {
     float density = 0.3f;
     uint32_t num_generations = 100;
     uint32_t save_interval = 1;
-    std::string output_dir = "states";
+    std::string output_dir = "runs/states";
     std::string prefix = "state";
     std::string load_file = "";
     bool validate_only = false;
