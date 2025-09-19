@@ -1,0 +1,63 @@
+CUDA Game of Life Simulation Summary
+=====================================
+
+Grid dimensions: 96x96x96
+Total generations: 500
+Save interval: 10
+States saved: 51
+Total time: 577 ms
+Rules: birth[2,6] survival[2,6]
+Initial density: 15%
+
+Files created:
+  massive_000000.bin
+  massive_000010.bin
+  massive_000020.bin
+  massive_000030.bin
+  massive_000040.bin
+  massive_000050.bin
+  massive_000060.bin
+  massive_000070.bin
+  massive_000080.bin
+  massive_000090.bin
+  massive_000100.bin
+  massive_000110.bin
+  massive_000120.bin
+  massive_000130.bin
+  massive_000140.bin
+  massive_000150.bin
+  massive_000160.bin
+  massive_000170.bin
+  massive_000180.bin
+  massive_000190.bin
+  massive_000200.bin
+  massive_000210.bin
+  massive_000220.bin
+  massive_000230.bin
+  massive_000240.bin
+  massive_000250.bin
+  massive_000260.bin
+  massive_000270.bin
+  massive_000280.bin
+  massive_000290.bin
+  massive_000300.bin
+  massive_000310.bin
+  massive_000320.bin
+  massive_000330.bin
+  massive_000340.bin
+  massive_000350.bin
+  massive_000360.bin
+  massive_000370.bin
+  massive_000380.bin
+  massive_000390.bin
+  massive_000400.bin
+  massive_000410.bin
+  massive_000420.bin
+  massive_000430.bin
+  massive_000440.bin
+  massive_000450.bin
+  massive_000460.bin
+  massive_000470.bin
+  massive_000480.bin
+  massive_000490.bin
+  massive_000500.bin
