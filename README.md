@@ -4,7 +4,7 @@ A CUDA implementation of 3D Conway-like cellular automata with a lightweight Ope
 Use the batch runner on a GPU machine to generate states, then visualize them on macOS.
 
 ## Why I built this
-
+It had been a while since I touched any CUDA at the time of building this so I wanted to brush up on my skills and build something cool but on the simpler end of the scale. It was also the first time I decided to document my planning on an Excalidraw whiteboard which is a practice I want to keep in my development cycle moving forward!
 
 ## Screenshots
 
